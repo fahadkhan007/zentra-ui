@@ -1,18 +1,21 @@
-import { useState } from 'react'
-import { Button } from './components/ui/button'
-
-import './App.css'
+import "./App.css"; // Zentra Theme
+import { Hero } from "./components/ui/animated-hero";
+import { NavBar } from "./components/ui/tubelight-navbar";
+import { Home, Info, HelpCircle } from "lucide-react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const navItems = [
+    { name: "Home", url: "#home", icon: Home },
+    { name: "About", url: "#about", icon: Info },
+    { name: "FAQ", url: "#faq", icon: HelpCircle },
+  ];
 
   return (
     <>
-      <Button onClick={() => {
-        setCount(count + 1)
-      }}>button {count}</Button>
+      <NavBar items={navItems} />
+      <Hero />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
