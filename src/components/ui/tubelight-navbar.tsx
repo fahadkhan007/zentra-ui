@@ -19,7 +19,11 @@ interface NavBarProps {
 export function NavBar({ items, className }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
   const [isMobile, setIsMobile] = useState(false)
-  const [theme, setTheme] = useState<"light" | "dark">("light")
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    // Initialize theme from localStorage or default to "light"
+    const savedTheme = localStorage.getItem("theme")
+    return (savedTheme === "dark" || savedTheme === "light") ? savedTheme : "light"
+  })
 
   useEffect(() => {
     const handleResize = () => {
@@ -38,6 +42,8 @@ export function NavBar({ items, className }: NavBarProps) {
     } else {
       root.classList.remove("dark")
     }
+    // Save theme to localStorage whenever it changes
+    localStorage.setItem("theme", theme)
   }, [theme])
 
   const toggleTheme = () => {
