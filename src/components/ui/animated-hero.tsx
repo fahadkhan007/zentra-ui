@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 function Hero() {
@@ -26,8 +27,14 @@ function Hero() {
       <div className="container mx-auto mt-20">
         <div className="flex gap-8 py-8 lg:py-16 items-center justify-center flex-col">
           <div>
-            <Button variant="secondary" size="sm" className="gap-4" onClick={() => window.open("https://www.who.int/publications/i/item/9789240015128")}>
-              Sourced from WHO <MoveRight className="w-4 h-4" />
+            <Button asChild variant="secondary" size="sm" className="gap-4">
+              <a
+                href="https://www.who.int/publications/i/item/9789240015128"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Sourced from WHO <MoveRight className="w-4 h-4" />
+              </a>
             </Button>
           </div>
           <div className="flex gap-4 flex-col">
@@ -65,11 +72,11 @@ function Hero() {
             </p>
           </div>
           <div className="flex flex-row gap-3">
-            <Button size="lg" className="gap-4" variant="outline">
-              Login <MoveRight className="w-4 h-4" />
+            <Button asChild size="lg" className="gap-4" variant="outline">
+              <Link to="/login">Login <MoveRight className="w-4 h-4" /></Link>
             </Button>
-            <Button size="lg" className="gap-4">
-              Get started <MoveRight className="w-4 h-4" />
+            <Button asChild size="lg" className="gap-4">
+              <Link to="/register">Get started <MoveRight className="w-4 h-4" /></Link>
             </Button>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import type { LucideProps } from "lucide-react"
 import { Moon, Sun } from "lucide-react"
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 
 interface NavItem {
@@ -18,22 +19,10 @@ interface NavBarProps {
 
 export function NavBar({ items, className }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
-  const [isMobile, setIsMobile] = useState(false)
   const [theme, setTheme] = useState<"light" | "dark">(() => {
-    // Initialize theme from localStorage or default to "light"
     const savedTheme = localStorage.getItem("theme")
     return (savedTheme === "dark" || savedTheme === "light") ? savedTheme : "light"
   })
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
 
   useEffect(() => {
     const root = document.documentElement
@@ -113,8 +102,8 @@ export function NavBar({ items, className }: NavBarProps) {
             )}
           </Button>
 
-          <Button size="sm" className="rounded-full px-4">
-            Login
+          <Button asChild size="sm" className="rounded-full px-4">
+            <Link to="/login">Login</Link>
           </Button>
         </div>
       </div>

@@ -1,21 +1,40 @@
-import "./App.css"; // Zentra Theme
-import { Hero } from "./components/ui/animated-hero";
-import { NavBar } from "./components/ui/tubelight-navbar";
-import { Home, Info, HelpCircle } from "lucide-react";
+import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// Pages
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+
+// Route guard
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
-  const navItems = [
-    { name: "Home", url: "#home", icon: Home },
-    { name: "About", url: "#about", icon: Info },
-    { name: "FAQ", url: "#faq", icon: HelpCircle },
-  ];
-
   return (
-    <>
-      <NavBar items={navItems} />
-      <Hero />
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protected — /* passes nested routes to DashboardPage's inner <Routes> */}
+        <Route
+          path="/dashboard/*"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 export default App;
+
