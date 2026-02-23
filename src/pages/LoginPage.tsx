@@ -43,7 +43,7 @@ export default function LoginPage() {
         clearError();
         try {
             await login(data.email, data.password);
-            navigate("/dashboard");
+            navigate("/dashboard/chat");
         } catch {
             // error is already set in the store
         }

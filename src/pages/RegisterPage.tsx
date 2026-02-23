@@ -67,7 +67,7 @@ export default function RegisterPage() {
         clearError();
         try {
             await signup(data.email, data.password, data.name);
-            navigate("/dashboard");
+            navigate("/onboarding");
         } catch {
             // error is set in the store
         }
