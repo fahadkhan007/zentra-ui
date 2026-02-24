@@ -5,10 +5,14 @@ import {
     Zap, Plus, MessageSquare, Trash2, LogOut,
     Moon, Sun, Send, Bot,
     Menu, X, Pencil, Check,
+    Activity, User,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuthStore } from "@/store/authStore";
+import ResultsPage from "./ResultsPage";
+import ProfilePage from "./ProfilePage";
+import AccountPage from "./AccountPage";
 import {
     chatApi,
     type ChatSessionSummary,
@@ -259,11 +263,14 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
 }
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
+type ActiveView = "chat" | "results" | "profile" | "account";
+
 export default function DashboardPage() {
     const navigate = useNavigate();
     const { logout, user } = useAuthStore();
     const { dark, toggle } = useDarkMode();
 
+    const [activeView, setActiveView] = useState<ActiveView>("chat");
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sessions, setSessions] = useState<ChatSessionSummary[]>([]);
     const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -458,7 +465,7 @@ export default function DashboardPage() {
                 {/* New chat */}
                 <div className="px-3 pt-3 pb-1 shrink-0">
                     <button
-                        onClick={createSession}
+                        onClick={() => { createSession(); setActiveView("chat"); }}
                         className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium
                             border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     >
@@ -483,7 +490,7 @@ export default function DashboardPage() {
                                 key={session.id}
                                 session={session}
                                 active={session.id === activeSessionId}
-                                onSelect={() => loadSession(session.id)}
+                                onSelect={() => { loadSession(session.id); setActiveView("chat"); }}
                                 onDelete={() => deleteSession(session.id)}
                                 onRename={(title) => renameSession(session.id, title)}
                             />
@@ -491,33 +498,77 @@ export default function DashboardPage() {
                     )}
                 </div>
 
+                {/* Health Metrics nav */}
+                <div className="px-2 pb-2 border-t border-border pt-3 shrink-0 space-y-0.5">
+                    <p className="text-[10px] text-muted-foreground/60 px-3 pb-1 font-semibold uppercase tracking-widest">
+                        Health Metrics
+                    </p>
+                    <button
+                        onClick={() => { setActiveView("results"); setSidebarOpen(false); }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors
+                            ${activeView === "results"
+                                ? "bg-muted text-foreground"
+                                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}`}
+                    >
+                        <Activity className="w-4 h-4" />
+                        My Results
+                    </button>
+                    <button
+                        onClick={() => { setActiveView("profile"); setSidebarOpen(false); }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors
+                            ${activeView === "profile"
+                                ? "bg-muted text-foreground"
+                                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}`}
+                    >
+                        <User className="w-4 h-4" />
+                        Health Profile
+                    </button>
+                </div>
+
                 {/* Bottom controls */}
-                <div className="px-3 py-3 border-t border-border shrink-0 space-y-0.5">
-                    {user?.email && (
-                        <p className="text-xs text-muted-foreground px-3 py-1 truncate">
-                            {user.email}
-                        </p>
+                <div className="px-3 py-3 border-t border-border shrink-0 space-y-1">
+                    {/* User avatar card */}
+                    {user && (
+                        <button
+                            onClick={() => { setActiveView("account"); setSidebarOpen(false); }}
+                            className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors
+                                ${activeView === "account"
+                                    ? "bg-muted"
+                                    : "hover:bg-muted/60"}`}
+                        >
+                            <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+                                <span className="text-xs font-bold text-primary">
+                                    {(user.name ?? user.email).slice(0, 2).toUpperCase()}
+                                </span>
+                            </div>
+                            <div className="text-left min-w-0">
+                                {user.name && <p className="text-xs font-medium truncate">{user.name}</p>}
+                                <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                            </div>
+                        </button>
                     )}
-                    <button
-                        onClick={toggle}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm
-                            text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                    >
-                        {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                        {dark ? "Light mode" : "Dark mode"}
-                    </button>
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm
-                            text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Log out
-                    </button>
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={toggle}
+                            className="flex-1 flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm
+                                text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        >
+                            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                            <span className="text-xs">{dark ? "Light" : "Dark"}</span>
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm
+                                text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            title="Log out"
+                        >
+                            <LogOut className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             </aside>
 
-            {/* ── MAIN CHAT AREA ──────────────────────────────────────────── */}
+            {/* ── MAIN AREA ───────────────────────────────────────────────── */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
                 {/* Top bar */}
@@ -529,12 +580,20 @@ export default function DashboardPage() {
                         <Menu className="w-5 h-5" />
                     </button>
                     <span className="text-sm font-medium truncate">
-                        {activeSession?.title ?? "Zentra AI"}
+                        {activeView === "results" ? "My Results"
+                            : activeView === "profile" ? "Health Profile"
+                                : activeView === "account" ? "My Profile"
+                                    : (activeSession?.title ?? "Zentra AI")}
                     </span>
                 </header>
 
-                {/* Messages area */}
-                <div className="flex-1 overflow-y-auto">
+                {/* Non-chat views */}
+                {activeView === "results" && <ResultsPage />}
+                {activeView === "profile" && <ProfilePage />}
+                {activeView === "account" && <AccountPage />}
+
+                {/* Chat view */}
+                <div className={`flex-1 overflow-y-auto ${activeView !== "chat" ? "hidden" : ""}`}>
                     {!activeSessionId ? (
                         <EmptyState onCreate={createSession} />
                     ) : loadingSession ? (
@@ -549,7 +608,7 @@ export default function DashboardPage() {
                             </p>
                         </div>
                     ) : (
-                        <div className="max-w-5xl mx-auto px-4 py-6 space-y-8">
+                        <div className="w-full max-w-5xl mx-auto px-3 sm:px-6 py-6 space-y-8">
                             <AnimatePresence initial={false}>
                                 {messages.map((msg) => (
                                     <motion.div
@@ -601,9 +660,9 @@ export default function DashboardPage() {
                     )}
                 </div>
 
-                {/* Input bar */}
-                <div className="px-4 py-4 border-t border-border shrink-0">
-                    <div className="max-w-5xl mx-auto">
+                {/* Input bar — only visible in chat view */}
+                {activeView === "chat" && <div className="px-3 sm:px-6 py-3 sm:py-4 border-t border-border shrink-0">
+                    <div className="w-full max-w-5xl mx-auto">
                         <div
                             className={`flex items-end gap-3 bg-muted/50 border rounded-2xl px-4 py-3 transition-all
                                 ${activeSessionId
@@ -640,7 +699,7 @@ export default function DashboardPage() {
                             Zentra may make mistakes. Verify important health information with a professional.
                         </p>
                     </div>
-                </div>
+                </div>}
             </div>
         </div>
     );
