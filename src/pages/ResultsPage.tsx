@@ -40,13 +40,7 @@ function Speedometer({ percent, color, label }: { percent: number; color: string
     const SEG = SWEEP / LEVELS.length;
     const segColors = LEVELS.map((l) => l.color);
 
-    const segArc = (i: number) => {
-        const a0 = START + i * SEG;
-        const a1 = START + (i + 1) * SEG;
-        const s = arcPt(a0, R);
-        const e = arcPt(a1, R);
-        return `M ${s.x} ${s.y} A ${R} ${R} 0 0 1 ${e.x} ${e.y}`;
-    };
+
 
     // Needle angle
     const needleAngle = START + (percent / 100) * SWEEP;
