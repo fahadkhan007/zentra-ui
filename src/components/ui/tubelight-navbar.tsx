@@ -21,7 +21,7 @@ export function NavBar({ items, className }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     const savedTheme = localStorage.getItem("theme")
-    return (savedTheme === "dark" || savedTheme === "light") ? savedTheme : "light"
+    return (savedTheme === "dark" || savedTheme === "light") ? savedTheme : "dark"
   })
 
   useEffect(() => {
