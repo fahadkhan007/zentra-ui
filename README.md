@@ -10,6 +10,7 @@
 
 <p align="center">
   A conversational AI health companion powered by a LangGraph RAG agent, ML-based obesity risk analysis, and a polished dashboard experience.
+  
 </p>
 
 ---
