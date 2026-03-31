@@ -3,7 +3,7 @@ import axios from "axios";
 // ─── Base URL ────────────────────────────────────────────────────────────────
 // In dev, Vite proxy forwards /api → http://127.0.0.1:8000
 // In production, set VITE_API_BASE_URL to your Railway backend URL
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "https://zentra-ai.up.railway.app";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "https://zentra-backend-umdc.onrender.com";
 
 // ─── Axios Instance ───────────────────────────────────────────────────────────
 export const apiClient = axios.create({
